@@ -1,0 +1,40 @@
+parameters:
+    level: 6
+    paths:
+        - bin/
+        - config/
+        - public/
+        - src/
+        - tests/
+
+    # Symfony
+    symfony:
+        containerXmlPath: var/cache/dev/App_KernelDevDebugContainer.xml
+        consoleApplicationLoader: phpstan/console.php
+    scanDirectories:
+        - var/cache/dev/Symfony/Config
+    doctrine:
+        objectManagerLoader: phpstan/doctrine.php
+
+    # If you're using PHP config files (including the ones under packages/*.php) for Symfony 5.3+,
+    # you need this to load the helper functions (i.e. service(), env()):
+    scanFiles:
+        - vendor/symfony/dependency-injection/Loader/Configurator/ContainerConfigurator.php
+
+    parallel:
+          maximumNumberOfProcesses: 1
+
+    checkUninitializedProperties: false
+    reportUnmatchedIgnoredErrors: true
+
+    # Exclure des dossiers
+    excludePaths:
+        analyseAndScan:
+            - vendor/*
+            - var/cache/*
+
+    # Ignorer certaines erreurs (optionnel)
+    ignoreErrors:
+          -
+              identifier: function.alreadyNarrowedType
+              path: tests/bootstrap.php
