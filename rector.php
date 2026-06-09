@@ -12,9 +12,11 @@ return RectorConfig::configure()
         __DIR__ . '/src',
         __DIR__ . '/tests',
     ])
-    ->withPreparedSets(symfonyConfigs: true)
-    // uncomment to reach your current PHP version
     ->withPhpSets()
+    ->withSymfonyContainerXml(
+        __DIR__ . '/var/cache/dev/App_KernelDevDebugContainer.xml'
+    )
+    ->withComposerBased(twig: true, doctrine: true, phpunit: true, symfony: true)
     ->withTypeCoverageLevel(0)
     ->withDeadCodeLevel(0)
     ->withCodeQualityLevel(0);
