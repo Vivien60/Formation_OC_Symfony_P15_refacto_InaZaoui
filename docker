@@ -1,0 +1,1 @@
+backup/album.sql compose exec postgres psql -U postgres -d ina_zaoui
