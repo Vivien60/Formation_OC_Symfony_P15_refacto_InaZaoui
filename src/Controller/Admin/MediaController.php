@@ -2,19 +2,17 @@
 
 namespace App\Controller\Admin;
 
+use Symfony\Component\Routing\Attribute\Route;
 use App\Entity\Media;
 use App\Form\MediaType;
 use App\Repository\MediaRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 
 class MediaController extends AbstractController
 {
-    /**
-     * @Route("/admin/media", name="admin_media_index")
-     */
+    #[Route(path: '/admin/media', name: 'admin_media_index')]
     public function index(Request $request, MediaRepository $mediaRepository)
     {
         $page = $request->query->getInt('page', 1);
@@ -40,9 +38,7 @@ class MediaController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/media/add", name="admin_media_add")
-     */
+    #[Route(path: '/admin/media/add', name: 'admin_media_add')]
     public function add(Request $request, EntityManagerInterface $entityManager)
     {
         $media = new Media();
@@ -61,12 +57,10 @@ class MediaController extends AbstractController
             return $this->redirectToRoute('admin_media_index');
         }
 
-        return $this->render('admin/media/add.html.twig', ['form' => $form->createView()]);
+        return $this->render('admin/media/add.html.twig', ['form' => $form]);
     }
 
-    /**
-     * @Route("/admin/media/delete/{id}", name="admin_media_delete")
-     */
+    #[Route(path: '/admin/media/delete/{id}', name: 'admin_media_delete')]
     public function delete(int $id, MediaRepository $mediaRepository, EntityManagerInterface $entityManager)
     {
         $media = $mediaRepository->find($id);

@@ -2,19 +2,17 @@
 
 namespace App\Controller\Admin;
 
+use Symfony\Component\Routing\Attribute\Route;
 use App\Entity\Album;
 use App\Form\AlbumType;
 use App\Repository\AlbumRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 
 class AlbumController extends AbstractController
 {
-    /**
-     * @Route("/admin/album", name="admin_album_index")
-     */
+    #[Route(path: '/admin/album', name: 'admin_album_index')]
     public function index(AlbumRepository $albumRepository)
     {
         $albums = $albumRepository->findAll();
@@ -22,9 +20,7 @@ class AlbumController extends AbstractController
         return $this->render('admin/album/index.html.twig', ['albums' => $albums]);
     }
 
-    /**
-     * @Route("/admin/album/add", name="admin_album_add")
-     */
+    #[Route(path: '/admin/album/add', name: 'admin_album_add')]
     public function add(Request $request, EntityManagerInterface $entityManager)
     {
         $album = new Album();
@@ -38,12 +34,10 @@ class AlbumController extends AbstractController
             return $this->redirectToRoute('admin_album_index');
         }
 
-        return $this->render('admin/album/add.html.twig', ['form' => $form->createView()]);
+        return $this->render('admin/album/add.html.twig', ['form' => $form]);
     }
 
-    /**
-     * @Route("/admin/album/update/{id}", name="admin_album_update")
-     */
+    #[Route(path: '/admin/album/update/{id}', name: 'admin_album_update')]
     public function update(Request $request, int $id, AlbumRepository $albumRepository, EntityManagerInterface $entityManager)
     {
         $album = $albumRepository->find($id);
@@ -56,12 +50,10 @@ class AlbumController extends AbstractController
             return $this->redirectToRoute('admin_album_index');
         }
 
-        return $this->render('admin/album/update.html.twig', ['form' => $form->createView()]);
+        return $this->render('admin/album/update.html.twig', ['form' => $form]);
     }
 
-    /**
-     * @Route("/admin/album/delete/{id}", name="admin_album_delete")
-     */
+    #[Route(path: '/admin/album/delete/{id}', name: 'admin_album_delete')]
     public function delete(int $id, AlbumRepository $albumRepository, EntityManagerInterface $entityManager)
     {
         $media = $albumRepository->find($id);

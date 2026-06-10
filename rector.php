@@ -13,6 +13,8 @@ return RectorConfig::configure()
         __DIR__.'/tests',
     ])
     ->withPhpSets()
+    ->withImportNames(importShortClasses: false, removeUnusedImports: true)
+    ->withAttributesSets()
     ->withSymfonyContainerXml(
         __DIR__.'/var/cache/dev/App_KernelDevDebugContainer.xml'
     )

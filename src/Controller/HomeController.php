@@ -2,25 +2,21 @@
 
 namespace App\Controller;
 
+use Symfony\Component\Routing\Attribute\Route;
 use App\Repository\AlbumRepository;
 use App\Repository\MediaRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Routing\Annotation\Route;
 
 class HomeController extends AbstractController
 {
-    /**
-     * @Route("/", name="home")
-     */
+    #[Route(path: '/', name: 'home')]
     public function home()
     {
         return $this->render('front/home.html.twig');
     }
 
-    /**
-     * @Route("/guests", name="guests")
-     */
+    #[Route(path: '/guests', name: 'guests')]
     public function guests(UserRepository $userRepository)
     {
         $guests = $userRepository->findBy(['admin' => false]);
@@ -30,9 +26,7 @@ class HomeController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/guest/{id}", name="guest")
-     */
+    #[Route(path: '/guest/{id}', name: 'guest')]
     public function guest(int $id, UserRepository $userRepository)
     {
         $guest = $userRepository->find($id);
@@ -42,9 +36,7 @@ class HomeController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/portfolio/{id}", name="portfolio")
-     */
+    #[Route(path: '/portfolio/{id}', name: 'portfolio')]
     public function portfolio(AlbumRepository $albumRepository, UserRepository $userRepository, MediaRepository $mediaRepository, ?int $id = null)
     {
         $albums = $albumRepository->findAll();
@@ -62,9 +54,7 @@ class HomeController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/about", name="about")
-     */
+    #[Route(path: '/about', name: 'about')]
     public function about()
     {
         return $this->render('front/about.html.twig');
