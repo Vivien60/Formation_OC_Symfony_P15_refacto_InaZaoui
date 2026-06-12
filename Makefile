@@ -1,5 +1,5 @@
 db-test:
-	docker compose up -d
+	docker compose up -d --wait
 	php bin/console doctrine:database:drop -f --if-exists --env=test
 	php bin/console doctrine:database:create --env=test
 	php bin/console doctrine:migrations:migrate --no-interaction --env=test
@@ -25,7 +25,7 @@ test-config-github-actions:
 	docker start ina_zaoui-postgres-1
 
 db-create:
-	docker compose up -d
+	docker compose up -d --wait
 	symfony console doctrine:database:drop --if-exists --force
 	symfony console doctrine:database:create
 	symfony console doctrine:migrations:migrate --no-interaction
