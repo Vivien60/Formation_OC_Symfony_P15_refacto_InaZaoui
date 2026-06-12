@@ -43,7 +43,7 @@ class SmokeTest extends WebTestCase
     {
         $this->client->request('GET', $url);
 
-        $this->assertResponseIsSuccessful();
+        $this->assertCurrentResponseIsSuccessful();
     }
 
     public static function publicSuccessfulRoutes(): iterable
@@ -63,7 +63,7 @@ class SmokeTest extends WebTestCase
     {
         $this->client->request('GET', $url);
 
-        $this->assertResponseIsSuccessful();
+        $this->assertCurrentResponseIsSuccessful();
     }
 
     public static function databaseBackedRoutes(): iterable
@@ -107,7 +107,7 @@ class SmokeTest extends WebTestCase
         $this->login();
         $this->client->request('GET', $url);
 
-        $this->assertResponseIsSuccessful();
+        $this->assertCurrentResponseIsSuccessful();
     }
 
     public static function authenticatedAdminRoutes(): iterable
@@ -170,5 +170,19 @@ class SmokeTest extends WebTestCase
         $this->client->request('GET', '/admin/album/delete/1');
 
         $this->assertResponseRedirects('/admin/album');
+    }
+
+    private function assertCurrentResponseIsSuccessful(): void
+    {
+        $response = $this->client->getResponse();
+
+        self::assertTrue(
+            $response->isSuccessful(),
+            sprintf(
+                'Expected 2xx, got HTTP %d. Exception: %s',
+                $response->getStatusCode(),
+                rawurldecode($response->headers->get('X-Debug-Exception', 'none'))
+            )
+        );
     }
 }
