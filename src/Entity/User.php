@@ -28,6 +28,7 @@ class User
     #[ORM\Column(length: 180, unique: true)]
     private ?string $email = null;
 
+    /** @var Collection<int, Media> */
     #[ORM\OneToMany(targetEntity: Media::class, mappedBy: 'user')]
     private Collection $medias;
 

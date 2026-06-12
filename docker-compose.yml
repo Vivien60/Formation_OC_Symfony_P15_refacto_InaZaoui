@@ -1,3 +1,5 @@
+name: ina_zaoui
+
 services:
   postgres:
     image: postgres:16-alpine
