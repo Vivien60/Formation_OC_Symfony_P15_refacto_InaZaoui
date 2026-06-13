@@ -20,14 +20,15 @@ class User
     private bool $admin = false;
 
     #[ORM\Column]
-    private ?string $name;
+    private ?string $name = null;
 
     #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $description;
+    private ?string $description = null;
 
     #[ORM\Column(length: 180, unique: true)]
     private ?string $email = null;
 
+    /** @var Collection<int, Media> */
     #[ORM\OneToMany(targetEntity: Media::class, mappedBy: 'user')]
     private Collection $medias;
 
