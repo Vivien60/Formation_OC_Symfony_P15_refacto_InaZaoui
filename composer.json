@@ -7,7 +7,6 @@
         "php": ">=8.0",
         "ext-ctype": "*",
         "ext-iconv": "*",
-        "doctrine/annotations": "^2.0",
         "doctrine/dbal": "^3",
         "doctrine/doctrine-bundle": "^2.12",
         "doctrine/doctrine-migrations-bundle": "^3.3",
@@ -90,7 +89,7 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "6.4.*"
+            "require": "7.4.*"
         }
     },
     "require-dev": {
@@ -108,7 +107,7 @@
         "symfony/css-selector": "*",
         "symfony/debug-bundle": "*",
         "symfony/maker-bundle": "^1.50",
-        "symfony/phpunit-bridge": "^7.1",
+        "symfony/phpunit-bridge": "^8.1",
         "symfony/stopwatch": "*",
         "symfony/web-profiler-bundle": "*"
     }

@@ -21,6 +21,9 @@ parameters:
     checkUninitializedProperties: false
     reportUnmatchedIgnoredErrors: true
 
+    doctrine:
+        allowNullablePropertyForRequiredField: true
+
     # Exclure des dossiers
     excludePaths:
         analyseAndScan:
@@ -29,6 +32,3 @@ parameters:
 
     # Ignorer certaines erreurs (optionnel)
     ignoreErrors:
-          -
-              identifier: function.alreadyNarrowedType
-              path: tests/bootstrap.php
