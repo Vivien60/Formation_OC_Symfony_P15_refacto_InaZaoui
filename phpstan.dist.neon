@@ -34,6 +34,7 @@ parameters:
         analyseAndScan:
             - vendor/*
             - var/cache/*
+            - config/reference.php
 
     # Ignorer certaines erreurs (optionnel)
     ignoreErrors:
