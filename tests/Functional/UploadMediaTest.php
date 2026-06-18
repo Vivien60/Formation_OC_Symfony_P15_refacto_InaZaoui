@@ -8,7 +8,7 @@ class UploadMediaTest extends FunctionalTestCase
 {
     protected function setUp(): void
     {
-        $this->client = static::createClient();
+        parent::setUp();
     }
 
     public function testUploadMediaShouldFail(): void
