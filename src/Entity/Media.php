@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\MediaRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: MediaRepository::class)]
 class Media
@@ -26,6 +27,12 @@ class Media
     #[ORM\Column]
     private string $title;
 
+    #[Assert\Image(
+        maxSize: '2M',
+        maxSizeMessage: 'The image is too large ({{ size }} {{ suffix }}). Allowed maximum size is {{ limit }} {{ suffix }}.',
+        uploadIniSizeErrorMessage: 'The image is too large ({{ size }} {{ suffix }}). Allowed maximum size is {{ limit }} {{ suffix }}.',
+        uploadFormSizeErrorMessage: 'The image is too large. Allowed maximum size for input fields is {{ limit }} {{ suffix }}.',
+    )]
     private ?UploadedFile $file = null;
 
     public function getId(): ?int

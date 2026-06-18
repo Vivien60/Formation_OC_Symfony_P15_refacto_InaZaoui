@@ -23,3 +23,5 @@ phpstan.neon
 /.php-cs-fixer.cache
 ###< friendsofphp/php-cs-fixer ###
 /config/reference.php
+
+/uploads/
