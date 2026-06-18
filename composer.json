@@ -109,6 +109,7 @@
         "symfony/maker-bundle": "^1.50",
         "symfony/phpunit-bridge": "^8.1",
         "symfony/stopwatch": "*",
-        "symfony/web-profiler-bundle": "*"
+        "symfony/web-profiler-bundle": "*",
+        "ext-gd": "*"
     }
 }

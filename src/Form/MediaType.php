@@ -48,6 +48,7 @@ class MediaType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Media::class,
             'is_admin' => false,
+            'post_max_size_message' => 'La taille maximale du fichier est de 2 Mo.',
         ]);
     }
 }
