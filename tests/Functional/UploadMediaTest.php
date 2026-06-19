@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class UploadMediaTest extends FunctionalTestCase
@@ -24,9 +25,10 @@ class UploadMediaTest extends FunctionalTestCase
         $this->assertSelectorTextContains('.invalid-feedback', 'Allowed maximum size is 2 MB');
     }
 
-    public function testUploadMediaShouldSucceed(): void
+    #[DataProvider('usersProvider')]
+    public function testUploadMediaShouldSucceed(mixed $user): void
     {
-        $this->login();
+        $this->login($user);
         $this->get('admin/media/add');
         $pathImg3Mo = __DIR__.DIRECTORY_SEPARATOR.'test_ok.jpg';
         $this->client->submitForm('Ajouter', [
@@ -39,5 +41,11 @@ class UploadMediaTest extends FunctionalTestCase
         $this->get('/portfolio/1');
         $this->assertResponseIsSuccessful();
         $this->assertAnySelectorTextContains('.media-title', 'Test image');
+    }
+
+    public static function usersProvider(): iterable
+    {
+        yield 'user admin' => ['ina'];
+        yield 'user non admin' => ['marie'];
     }
 }
