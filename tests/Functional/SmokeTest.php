@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
@@ -36,9 +37,7 @@ class SmokeTest extends WebTestCase
         $this->client->loginUser($provider->loadUserByIdentifier($identifier));
     }
 
-    /**
-     * @dataProvider publicSuccessfulRoutes
-     */
+    #[DataProvider('publicSuccessfulRoutes')]
     public function testPublicRouteIsSuccessful(string $url): void
     {
         $this->client->request('GET', $url);
@@ -56,9 +55,8 @@ class SmokeTest extends WebTestCase
     /**
      * Routes publiques qui interrogent la base. Les id sont hardcodés (1) :
      * on fait confiance au jeu de données de test.
-     *
-     * @dataProvider databaseBackedRoutes
      */
+    #[DataProvider('databaseBackedRoutes')]
     public function testDatabaseRouteIsSuccessful(string $url): void
     {
         $this->client->request('GET', $url);
@@ -77,9 +75,8 @@ class SmokeTest extends WebTestCase
     /**
      * Sans authentification, une route /admin doit renvoyer une redirection
      * (vers le formulaire de login), pas une 200 ni une 500.
-     *
-     * @dataProvider protectedRoutes
      */
+    #[DataProvider('protectedRoutes')]
     public function testProtectedRouteRedirects(string $url): void
     {
         $this->client->request('GET', $url);
@@ -99,9 +96,8 @@ class SmokeTest extends WebTestCase
      *
      * On se limite aux GET non mutants : surtout pas les routes "delete"
      * (admin album/media), qui suppriment en base sur un simple GET.
-     *
-     * @dataProvider authenticatedAdminRoutes
      */
+    #[DataProvider('authenticatedAdminRoutes')]
     public function testAuthenticatedAdminRouteIsSuccessful(string $url): void
     {
         $this->login();
@@ -181,7 +177,7 @@ class SmokeTest extends WebTestCase
             sprintf(
                 'Expected 2xx, got HTTP %d. Exception: %s',
                 $response->getStatusCode(),
-                rawurldecode($response->headers->get('X-Debug-Exception', 'none'))
+                rawurldecode((string) $response->headers->get('X-Debug-Exception', 'none'))
             )
         );
     }

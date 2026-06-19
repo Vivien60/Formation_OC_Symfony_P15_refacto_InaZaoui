@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
+use Rector\PHPUnit\Set\PHPUnitSetList;
 
 return RectorConfig::configure()
     ->withPaths([
@@ -18,7 +19,9 @@ return RectorConfig::configure()
     ->withSymfonyContainerXml(
         __DIR__.'/var/cache/dev/App_KernelDevDebugContainer.xml'
     )
-    ->withComposerBased(twig: true, doctrine: true, phpunit: true, symfony: true)
+    ->withSets([
+        PHPUnitSetList::PHPUNIT_120,
+    ])
     ->withTypeCoverageLevel(0)
     ->withDeadCodeLevel(0)
     ->withCodeQualityLevel(0);
