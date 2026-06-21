@@ -3,8 +3,6 @@
 namespace App\Tests\Functional;
 
 use PHPUnit\Framework\Attributes\DataProvider;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 /**
  * Smoke tests : on ne vérifie QUE le code de retour HTTP des routes.
@@ -15,27 +13,8 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
  * Les routes "data" interrogent la base (Postgres de test peuplé, id à partir
  * de 1). On ne vérifie jamais le contenu, seulement le statut HTTP.
  */
-class SmokeTest extends WebTestCase
+class SmokeTest extends FunctionalTestCase
 {
-    private KernelBrowser $client;
-
-    protected function setUp(): void
-    {
-        $this->client = static::createClient();
-    }
-
-    /**
-     * Login simulé : injecte directement un token authentifié en session,
-     * sans passer par le formulaire ni vérifier de mot de passe.
-     *
-     * L'identifiant par défaut est "ina" car le firewall s'authentifie contre
-     * un provider "memory" (cf. security.yaml) qui ne contient que ce compte.
-     */
-    private function login(string $identifier = 'ina'): void
-    {
-        $provider = static::getContainer()->get('security.user.provider.concrete.users_in_memory');
-        $this->client->loginUser($provider->loadUserByIdentifier($identifier));
-    }
 
     #[DataProvider('publicSuccessfulRoutes')]
     public function testPublicRouteIsSuccessful(string $url): void
@@ -100,7 +79,7 @@ class SmokeTest extends WebTestCase
     #[DataProvider('authenticatedAdminRoutes')]
     public function testAuthenticatedAdminRouteIsSuccessful(string $url): void
     {
-        $this->login();
+        $this->login('ina@zaoui.com');
         $this->client->request('GET', $url);
 
         $this->assertCurrentResponseIsSuccessful();
@@ -122,7 +101,7 @@ class SmokeTest extends WebTestCase
      */
     public function testAdminAddAlbumRedirects(): void
     {
-        $this->login();
+        $this->login('ina@zaoui.com');
         $this->client->request('GET', '/admin/album/add');
         $this->client->submitForm('Ajouter', [
             'album[name]' => 'Smoke test album',
@@ -137,7 +116,7 @@ class SmokeTest extends WebTestCase
      */
     public function testAdminUpdateAlbumRedirects(): void
     {
-        $this->login();
+        $this->login('ina@zaoui.com');
         $this->client->request('GET', '/admin/album/update/1');
         $this->client->submitForm('Modifier', [
             'album[name]' => 'Smoke test album updated',
@@ -158,11 +137,11 @@ class SmokeTest extends WebTestCase
      */
     public function testAdminDeleteAlbumRedirects(): void
     {
-        self::markTestSkipped(
+        self::markTestIncomplete(
             'Bug applicatif : delete album renvoie 500 si des medias y sont liés '
             .'(pas de cascade). À réactiver après correction.'
         );
-        $this->login();
+        $this->login('ina@zaoui.com');
         $this->client->request('GET', '/admin/album/delete/1');
 
         $this->assertResponseRedirects('/admin/album');
