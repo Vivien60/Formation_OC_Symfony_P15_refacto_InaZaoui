@@ -28,8 +28,8 @@ class MigrateInMemoryUsersCommand extends Command
 {
     public function __construct(
         private readonly EntityManagerInterface $em,
-        #[Autowire('%kernel.project_dir%')]
-        private readonly string $projectDir,
+        #[Autowire(param: 'app.in_memory_user_migration')]
+        private readonly array $inMemoryUserLinks,
     ) {
         parent::__construct();
     }
@@ -49,57 +49,49 @@ class MigrateInMemoryUsersCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         $relativePath = (string) $input->getArgument('security-file');
-        $path = $this->projectDir . '/' . ltrim($relativePath, '/');
 
-        if (!is_file($path)) {
-            $io->error(sprintf('Fichier introuvable : %s', $path));
+        $config = $this->inMemoryUserLinks;
+
+        if (!isset($this->inMemoryUserLinks)) {
+            $io->error(sprintf('Config de migration introuvable : %s', 'app.in_memory_user_migration'));
 
             return Command::FAILURE;
         }
 
-        $config = Yaml::parseFile($path);
-
-        // On récupère le premier provider de type "memory", quel que soit son nom.
-        $memoryUsers = [];
-        foreach ($config['security']['providers'] ?? [] as $provider) {
-            if (isset($provider['memory']['users'])) {
-                $memoryUsers = $provider['memory']['users'];
-                break;
-            }
-        }
-
-        if ([] === $memoryUsers) {
-            $io->warning(sprintf('Aucun utilisateur in-memory trouvé dans %s', $relativePath));
+        if (empty($this->inMemoryUserLinks)) {
+            $io->warning(sprintf('Aucun utilisateur in-memory trouvé dans %s', 'app.in_memory_user_migration'));
 
             return Command::SUCCESS;
         }
+
 
         $repository = $this->em->getRepository(User::class);
         $created = 0;
         $updated = 0;
 
-        foreach ($memoryUsers as $identifier => $data) {
-            if (!isset($data['password'])) {
-                $io->warning(sprintf('Entrée "%s" ignorée : pas de mot de passe.', $identifier));
+        foreach ($this->inMemoryUserLinks as $identifier => $inMemoryUser) {
+            if (!isset($inMemoryUser['linked_user_email'])) {
+                $io->warning(sprintf('Entrée "%s" ignorée : aucun email fourni.', $identifier));
 
                 continue;
             }
+            $email = $inMemoryUser['linked_user_email'];
 
-            $login = (string) $identifier;
-
-            $user = $repository->findOneBy(['login' => $login]);
+            $user = $repository->findOneBy(['email' => $email]);
             if (null === $user) {
                 $user = new User();
                 // "name" est NOT NULL en base : valeur de repli pour un user créé.
-                $user->setLogin($login);
+                $user->setName($identifier);
+                $user->setEmail($email);
                 ++$created;
             } else {
                 ++$updated;
             }
 
             // Hash recopié tel quel : jamais déchiffré ni régénéré.
-            $user->setPassword($data['password']);
-            $user->setRoles($data['roles'] ?? []);
+            $user->setLogin($email);
+            $user->setPassword($inMemoryUser['password']);
+            $user->setRoles($inMemoryUser['roles'] ?? []);
 
             $this->em->persist($user);
         }

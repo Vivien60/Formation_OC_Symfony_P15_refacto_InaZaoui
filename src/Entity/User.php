@@ -27,7 +27,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $name = null;
 
-    #[ORM\Column]
+    #[ORM\Column(type: 'string', length: 180, unique: true, nullable: true)]
+    #[Assert\Length(
+        min: 3,
+        minMessage: 'Your username should be at least {{ limit }} characters',
+        max: 180,
+    )]
     private ?string $login = null;
 
     #[ORM\Column(type: 'text', nullable: true)]
@@ -41,8 +46,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Media::class, mappedBy: 'user')]
     private Collection $medias;
 
-    #[ORM\Column(length: 60)]
-    private string $password;
+    #[ORM\Column(length: 60, nullable: true)]
+    #[Assert\Length(
+        min: 8,
+        minMessage: 'Your password should be at least {{ limit }} characters',
+        max: 4096,
+    )]
+    private ?string $password = null;
 
     #[Assert\NotBlank]
     #[Assert\NotCompromisedPassword]
@@ -121,6 +131,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getPassword(): ?string
     {
         return $this->password;
+    }
+
+    public function setPassword(string $password): void
+    {
+        $this->password = $password;
     }
 
     public function getRoles(): array
