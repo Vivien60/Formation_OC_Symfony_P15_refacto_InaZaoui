@@ -41,12 +41,16 @@ abstract class FunctionalTestCase extends WebTestCase
         return $this->client->request('GET', $uri, $parameters);
     }
 
-    protected function login(string $identifier = 'ina'): void
+    /**
+     * Login simulé : injecte directement un token authentifié en session,
+     * sans passer par le formulaire ni vérifier de mot de passe.
+     */
+    protected function login(string $identifier): void
     {
-        $provider = static::getContainer()->get('security.user.provider.concrete.users_in_memory');
+        $provider = static::getContainer()->get('security.user.provider.concrete.user_provider');
+
         $this->client->loginUser($provider->loadUserByIdentifier($identifier));
     }
-
     /**
      * @param array<string, mixed> $formData
      */

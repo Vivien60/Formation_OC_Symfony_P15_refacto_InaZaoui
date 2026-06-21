@@ -35,3 +35,12 @@ db-create:
 	php bin/console doctrine:query:sql "SELECT setval('media_id_seq', (SELECT COALESCE(MAX(id), 1) FROM media), true)"
 	php bin/console doctrine:query:sql "SELECT setval('album_id_seq', (SELECT COALESCE(MAX(id), 1) FROM \"album\"), true)"
 	php bin/console doctrine:query:sql "SELECT setval('user_id_seq', (SELECT COALESCE(MAX(id), 1) FROM \"user\"), true)"
+
+migrate-users:
+	php bin/console app:migrate-inmemory-users
+
+symfony-linters-execute:
+	php bin/console lint:yaml config
+	php bin/console lint:twig templates
+	php bin/console lint:container
+	php bin/console doctrine:schema:validate --skip-sync

@@ -6,10 +6,15 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
-class User
+#[UniqueEntity(fields: ['login'], message: 'There is already an account with this login')]
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -22,15 +27,44 @@ class User
     #[ORM\Column]
     private ?string $name = null;
 
+    #[ORM\Column(type: 'string', length: 180, unique: true, nullable: true)]
+    #[Assert\Length(
+        min: 3,
+        minMessage: 'Your username should be at least {{ limit }} characters',
+        max: 180,
+    )]
+    private ?string $login = null;
+
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $description = null;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[Assert\Email(message: 'L\'adresse email "{{ value }}" n\'est pas une adresse email valide.')]
     private ?string $email = null;
 
     /** @var Collection<int, Media> */
     #[ORM\OneToMany(targetEntity: Media::class, mappedBy: 'user')]
     private Collection $medias;
+
+    #[ORM\Column(length: 60, nullable: true)]
+    #[Assert\Length(
+        min: 8,
+        minMessage: 'Your password should be at least {{ limit }} characters',
+        max: 4096,
+    )]
+    private ?string $password = null;
+
+    #[Assert\NotBlank]
+    #[Assert\NotCompromisedPassword]
+    #[Assert\PasswordStrength]
+    private ?string $plainPassword = null;
+
+    /**
+     * @var list<string> The user roles
+     */
+    #[ORM\Column]
+    private array $roles = [];
+
 
     public function __construct()
     {
@@ -92,5 +126,55 @@ class User
     public function setAdmin(bool $admin): void
     {
         $this->admin = $admin;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(string $password): void
+    {
+        $this->password = $password;
+    }
+
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
+    }
+
+    /**
+     * @param list<string> $roles
+     */
+    public function setRoles(array $roles): static
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    #[\Deprecated]
+    public function eraseCredentials(): void
+    {
+        // @deprecated, to be removed when upgrading to Symfony 8
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return $this->login;
+    }
+
+    public function getLogin(): ?string
+    {
+        return $this->login;
+    }
+
+    public function setLogin(?string $login): void
+    {
+        $this->login = $login;
     }
 }
