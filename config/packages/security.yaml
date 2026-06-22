@@ -1,34 +1,55 @@
+# yaml-language-server: $schema=../../vendor/symfony/dependency-injection/Loader/schema/services.schema.json
+parameters:
+  app.in_memory_user_migration:
+    ina:
+      linked_user_email: 'ina@zaoui.com'
+      password: '$2y$13$7JS0ehfU8vZhB3Q8o1sPGuoQxkiPGXRGgrAizmNfI5Sgy.Dqt9xoW'
+      roles: [ 'ROLE_ADMIN' ]
+    marie:
+      linked_user_email: 'marie@example.com'
+      password: '$2y$13$7JS0ehfU8vZhB3Q8o1sPGuoQxkiPGXRGgrAizmNfI5Sgy.Dqt9xoW'
+      roles: [ 'ROLE_USER' ]
+
 security:
-    enable_authenticator_manager: true
+    # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+    # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
-        app_user_provider:
+        user_provider:
+            entity:
+                class: App\Entity\User
+                property: login
+        users_in_memory:
             memory:
                 users:
                     ina: { password: '$2y$13$7JS0ehfU8vZhB3Q8o1sPGuoQxkiPGXRGgrAizmNfI5Sgy.Dqt9xoW', roles: ['ROLE_ADMIN'] }
+                    marie: { password: '$2y$13$7JS0ehfU8vZhB3Q8o1sPGuoQxkiPGXRGgrAizmNfI5Sgy.Dqt9xoW', roles: [ 'ROLE_USER' ] }
+
+        chain_provider:
+          chain:
+            providers: [ 'user_provider', 'users_in_memory' ]
+
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
             lazy: true
-            provider: app_user_provider
+            provider: chain_provider
             form_login:
                 login_path: admin_login
                 check_path: admin_login
-    role_hierarchy:
-        ROLE_ADMIN: ROLE_USER
+
+    # Note: Only the *first* matching rule is applied
     access_control:
-        - { path: ^/admin, roles: ROLE_USER }
+      - { path: ^/admin, roles: ROLE_USER }
 
 when@test:
     security:
         password_hashers:
-            # By default, password hashers are resource intensive and take time. This is
-            # important to generate secure password hashes. In tests however, secure hashes
-            # are not important, waste resources and increase test times. The following
-            # reduces the work factor to the lowest possible values.
+            # Password hashers are resource-intensive by design to ensure security.
+            # In tests, it's safe to reduce their cost to improve performance.
             Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
                 algorithm: auto
                 cost: 4 # Lowest possible value for bcrypt

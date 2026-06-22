@@ -1,0 +1,35 @@
+parameters:
+    level: 0
+    paths:
+        - bin/
+        - config/
+        - public/
+        - src/
+        - tests/
+
+    scanDirectories:
+        - var/cache/dev/Symfony/Config
+
+    # If you're using PHP config files (including the ones under packages/*.php) for Symfony 5.3+,
+    # you need this to load the helper functions (i.e. service(), env()):
+    scanFiles:
+        - vendor/symfony/dependency-injection/Loader/Configurator/ContainerConfigurator.php
+
+    parallel:
+          maximumNumberOfProcesses: 1
+
+    checkUninitializedProperties: false
+    reportUnmatchedIgnoredErrors: true
+
+    doctrine:
+        allowNullablePropertyForRequiredField: true
+
+    # Exclure des dossiers
+    excludePaths:
+        analyseAndScan:
+            - vendor/*
+            - var/cache/*
+            - config/reference.php
+
+    # Ignorer certaines erreurs (optionnel)
+    ignoreErrors:
