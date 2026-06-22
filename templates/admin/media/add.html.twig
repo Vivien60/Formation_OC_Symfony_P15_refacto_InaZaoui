@@ -7,10 +7,10 @@
     </div>
     {{ form_start(form) }}
         {{ form_errors(form) }}
-        {{ form_row(form.user) }}
+        {{ form_row(form.title) }}
         {% if is_granted('ROLE_ADMIN') %}
             {{ form_row(form.album) }}
-            {{ form_row(form.title) }}
+            {{ form_row(form.user) }}
         {% endif %}
         {{ form_row(form.file) }}
         <button type="submit" class="btn btn-primary">Ajouter</button>

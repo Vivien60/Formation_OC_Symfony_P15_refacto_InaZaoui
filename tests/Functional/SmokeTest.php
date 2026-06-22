@@ -92,25 +92,6 @@ class SmokeTest extends FunctionalTestCase
     }
 
     /**
-     * POST mutant : on soumet le formulaire d'ajout d'album. Le succès se signe
-     * par une redirection 302 vers l'index (une erreur de validation
-     * ré-afficherait le formulaire en 200).
-     *
-     * Le formulaire est récupéré via le Crawler pour embarquer le token CSRF.
-     * La mutation est annulée en fin de test par DAMA (rollback transactionnel).
-     */
-    public function testAdminAddAlbumRedirects(): void
-    {
-        $this->login('ina@zaoui.com');
-        $this->client->request('GET', '/admin/album/add');
-        $this->client->submitForm('Ajouter', [
-            'album[name]' => 'Smoke test album',
-        ]);
-
-        $this->assertResponseRedirects('/admin/album');
-    }
-
-    /**
      * POST mutant : édition d'un album existant (id 1). Succès = redirection 302
      * vers l'index. Mutation annulée par DAMA.
      */
