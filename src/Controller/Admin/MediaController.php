@@ -48,6 +48,7 @@ class MediaController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             if (!$this->isGranted('ROLE_ADMIN')) {
                 $media->setUser($this->getUser());
+                $media->setAlbum(null);
             }
             $media->setPath('uploads/'.md5(uniqid()).'.'.$media->getFile()->guessExtension());
             $media->getFile()->move('uploads/', $media->getPath());
