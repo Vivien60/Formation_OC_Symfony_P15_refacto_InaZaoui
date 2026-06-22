@@ -118,10 +118,6 @@ class SmokeTest extends FunctionalTestCase
      */
     public function testAdminDeleteAlbumRedirects(): void
     {
-        self::markTestIncomplete(
-            'Bug applicatif : delete album renvoie 500 si des medias y sont liés '
-            .'(pas de cascade). À réactiver après correction.'
-        );
         $this->login('ina@zaoui.com');
         $this->client->request('GET', '/admin/album/delete/1');
 
