@@ -109,12 +109,6 @@ class SmokeTest extends FunctionalTestCase
     /**
      * Suppression d'un album existant (id 1). La route supprime sur un simple
      * GET puis redirige (302). DAMA restaure la ligne après le test.
-     *
-     * SKIPPÉ : bug applicatif connu. Le contrôleur fait remove()+flush() sans
-     * cascade ni gestion de la contrainte FK, donc supprimer un album encore
-     * référencé par des medias renvoie une 500 (FK violation), pas une 302.
-     * Sert de test de non-régression : retirer le skip une fois la suppression
-     * en cascade (ou la gestion de la contrainte) implémentée.
      */
     public function testAdminDeleteAlbumRedirects(): void
     {
