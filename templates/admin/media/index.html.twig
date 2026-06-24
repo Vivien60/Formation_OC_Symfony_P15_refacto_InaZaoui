@@ -5,6 +5,7 @@
         <h1>Medias</h1>
         <a href="{{ path('admin_media_add') }}" class="btn btn-primary">Ajouter</a>
     </div>
+
     <table class="table">
         <thead>
             <tr>
@@ -24,10 +25,30 @@
                     <td>{{ media.title }}</td>
                     {% if is_granted('ROLE_ADMIN') %}
                         <td>{{ media.user.name }}</td>
-                        <td>{{ media.album.name ?? '' }}</td>
+                        <td>
+                            {% if media.album %}
+                                {{ media.album.name }}
+                            {% else %}
+                                <form class="choose-album__form" method="post" action="" data-confirm-message="Confirmez-vous la mise à jour ?">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('album-media') }}">
+                                    <input type="hidden" name="id" value="{{ media.id }}">
+                                    <label>
+                                        <select name="album" class="form-control" onchange="this.form.submit()">
+                                            <option value="">Choisir un album</option>
+                                            {%  for album in albums %}
+                                                <option value="{{ album.id }}">{{ album.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </label>
+                                </form>
+                            {% endif %}
+                        </td>
                     {% endif %}
                     <td>
-                        <a href="{{ path('admin_media_delete', {id: media.id}) }}" class="btn btn-danger">Supprimer</a>
+                        <form class="delete-media__form" name="delete-media__form" method="post" action="{{ path("admin_media_delete", {id: media.id}) }}" data-confirm-message="Confirmez-vous la demande de suppression ?">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete-media') }}">
+                            <button class="btn btn-danger" type="submit">Supprimer</button>
+                        </form>
                     </td>
                 </tr>
             {% endfor %}

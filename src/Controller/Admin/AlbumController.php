@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Entity\Album;
 use App\Form\AlbumType;
@@ -13,7 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 class AlbumController extends AbstractController
 {
     #[Route(path: '/admin/album', name: 'admin_album_index')]
-    public function index(AlbumRepository $albumRepository)
+    public function index(AlbumRepository $albumRepository): Response
     {
         $albums = $albumRepository->findAll();
 
