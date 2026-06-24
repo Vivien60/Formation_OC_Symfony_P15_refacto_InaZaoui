@@ -28,15 +28,15 @@ class MediaType extends AbstractType
         if ($options['is_admin']) {
             $builder
                 ->add('user', EntityType::class, [
-                    'label' => 'Utilisateur',
-                    'required' => false,
-                    'class' => User::class,
+                    'label'        => 'Utilisateur',
+                    'required'     => false,
+                    'class'        => User::class,
                     'choice_label' => 'name',
                 ])
                 ->add('album', EntityType::class, [
-                    'label' => 'Album',
-                    'required' => false,
-                    'class' => Album::class,
+                    'label'        => 'Album',
+                    'required'     => false,
+                    'class'        => Album::class,
                     'choice_label' => 'name',
                 ])
             ;
@@ -46,8 +46,8 @@ class MediaType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Media::class,
-            'is_admin' => false,
+            'data_class'            => Media::class,
+            'is_admin'              => false,
             'post_max_size_message' => 'La taille maximale du fichier est de 2 Mo.',
         ]);
     }
