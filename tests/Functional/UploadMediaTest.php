@@ -7,9 +7,6 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class UploadMediaTest extends FunctionalTestCase
 {
-    private const ADMIN_IDENTIFIER = 'ina@zaoui.com';
-    private const NON_ADMIN_IDENTIFIER = 'marie@example.com';
-
     protected function setUp(): void
     {
         parent::setUp();
