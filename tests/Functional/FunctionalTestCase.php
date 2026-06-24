@@ -11,6 +11,8 @@ use Symfony\Component\DomCrawler\Crawler;
 
 abstract class FunctionalTestCase extends WebTestCase
 {
+    protected const ADMIN_IDENTIFIER = 'ina@zaoui.com';
+    protected const NON_ADMIN_IDENTIFIER = 'marie@example.com';
     protected KernelBrowser $client;
 
     protected function setUp(): void

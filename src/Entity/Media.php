@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\MediaRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: MediaRepository::class)]
@@ -19,6 +20,7 @@ class Media
     private ?User $user = null;
 
     #[ORM\ManyToOne(targetEntity: Album::class, fetch: 'EAGER')]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?Album $album = null;
 
     #[ORM\Column]
@@ -45,7 +47,7 @@ class Media
         return $this->user;
     }
 
-    public function setUser(?User $user): void
+    public function setUser(User|UserInterface|null $user): void
     {
         $this->user = $user;
     }

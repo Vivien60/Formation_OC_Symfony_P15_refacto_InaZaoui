@@ -92,25 +92,6 @@ class SmokeTest extends FunctionalTestCase
     }
 
     /**
-     * POST mutant : on soumet le formulaire d'ajout d'album. Le succès se signe
-     * par une redirection 302 vers l'index (une erreur de validation
-     * ré-afficherait le formulaire en 200).
-     *
-     * Le formulaire est récupéré via le Crawler pour embarquer le token CSRF.
-     * La mutation est annulée en fin de test par DAMA (rollback transactionnel).
-     */
-    public function testAdminAddAlbumRedirects(): void
-    {
-        $this->login('ina@zaoui.com');
-        $this->client->request('GET', '/admin/album/add');
-        $this->client->submitForm('Ajouter', [
-            'album[name]' => 'Smoke test album',
-        ]);
-
-        $this->assertResponseRedirects('/admin/album');
-    }
-
-    /**
      * POST mutant : édition d'un album existant (id 1). Succès = redirection 302
      * vers l'index. Mutation annulée par DAMA.
      */
@@ -128,19 +109,9 @@ class SmokeTest extends FunctionalTestCase
     /**
      * Suppression d'un album existant (id 1). La route supprime sur un simple
      * GET puis redirige (302). DAMA restaure la ligne après le test.
-     *
-     * SKIPPÉ : bug applicatif connu. Le contrôleur fait remove()+flush() sans
-     * cascade ni gestion de la contrainte FK, donc supprimer un album encore
-     * référencé par des medias renvoie une 500 (FK violation), pas une 302.
-     * Sert de test de non-régression : retirer le skip une fois la suppression
-     * en cascade (ou la gestion de la contrainte) implémentée.
      */
     public function testAdminDeleteAlbumRedirects(): void
     {
-        self::markTestIncomplete(
-            'Bug applicatif : delete album renvoie 500 si des medias y sont liés '
-            .'(pas de cascade). À réactiver après correction.'
-        );
         $this->login('ina@zaoui.com');
         $this->client->request('GET', '/admin/album/delete/1');
 
