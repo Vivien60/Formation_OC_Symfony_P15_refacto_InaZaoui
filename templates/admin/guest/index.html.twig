@@ -1,0 +1,28 @@
+{% extends 'admin.html.twig' %}
+
+{% block admin %}
+    <div class="d-flex justify-content-between align-items-center">
+        <h1>Invités</h1>
+    </div>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Nom</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for guest in guests %}
+            <tr>
+                <td>{{ guest.name }}</td>
+                <td>
+                    <form class="delete-form" name="delete-form" method="post" action="{{ path("admin_guest_delete", {id: guest.id}) }}" data-confirm-message="Confirmez-vous la demande de suppression ?">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete-guest') }}">
+                        <button class="btn btn-danger" type="submit">Supprimer</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

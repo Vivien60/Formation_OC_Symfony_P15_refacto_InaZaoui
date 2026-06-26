@@ -4,11 +4,15 @@ namespace App\Entity;
 
 use App\Repository\MediaRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
+use JetBrains\PhpStorm\NoReturn;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: MediaRepository::class)]
+#[HasLifecycleCallbacks]
 class Media
 {
     #[ORM\Id]
@@ -36,6 +40,11 @@ class Media
         uploadFormSizeErrorMessage: 'The image is too large. Allowed maximum size for input fields is {{ limit }} {{ suffix }}.',
     )]
     private ?UploadedFile $file = null;
+
+    public function __construct()
+    {
+
+    }
 
     public function getId(): ?int
     {
