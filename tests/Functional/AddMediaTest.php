@@ -11,7 +11,7 @@ namespace App\Tests\Functional;
  * Les routes "data" interrogent la base (Postgres de test peuplé, id à partir
  * de 1). On ne vérifie jamais le contenu, seulement le statut HTTP.
  */
-class MediaManagementTest extends FunctionalTestCase
+class AddMediaTest extends FunctionalTestCase
 {
     public function testAddingMediaToAlbumIsSuccessful(): void
     {
