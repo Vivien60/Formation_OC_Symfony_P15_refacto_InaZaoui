@@ -34,4 +34,24 @@ final class GuestController extends AbstractController
         $entityManager->flush();
         return $this->redirectToRoute('admin_guest_index');
     }
+
+    #[Route('/admin/guest/revocate/{id}', name: 'admin_guest_revocate', methods: ['POST'])]
+    #[IsCsrfTokenValid('revocate-guest', tokenKey: '_token')]
+    public function revocateAccess(User $user, EntityManagerInterface $entityManager): RedirectResponse
+    {
+        $user->revocate();
+        $entityManager->persist($user);
+        $entityManager->flush();
+        return $this->redirectToRoute('admin_guest_index');
+    }
+
+    #[Route('/admin/guest/reinstate/{id}', name: 'admin_guest_reinstate', methods: ['POST'])]
+    #[IsCsrfTokenValid('reinstate-guest', tokenKey: '_token')]
+    public function reinstateAccess(User $user, EntityManagerInterface $entityManager): RedirectResponse
+    {
+        $user->reinstate();
+        $entityManager->persist($user);
+        $entityManager->flush();
+        return $this->redirectToRoute('admin_guest_index');
+    }
 }
