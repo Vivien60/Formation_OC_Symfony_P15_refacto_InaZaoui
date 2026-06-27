@@ -8,7 +8,7 @@
         <thead>
         <tr>
             <th>Nom</th>
-            <th>Actions</th>
+            <th colspan="2">Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -20,6 +20,19 @@
                         <input type="hidden" name="_token" value="{{ csrf_token('delete-guest') }}">
                         <button class="btn btn-danger" type="submit">Supprimer</button>
                     </form>
+                </td>
+                <td>
+                    {% if guest.isRevocated %}
+                        <form class="reinstate-form" name="reinstate-form" method="post" action="{{ path("admin_guest_reinstate", {id: guest.id}) }}" data-confirm-message="Confirmez-vous la demande de restauration de l'accès ?">
+                            <input type="hidden" name="_token" value="{{ csrf_token('reinstate-guest') }}">
+                            <button class="btn btn-outline-danger" type="submit">Restaurer l'accès</button>
+                        </form>
+                    {%  else %}
+                        <form class="revocate-form" name="revocate-form" method="post" action="{{ path("admin_guest_revocate", {id: guest.id}) }}" data-confirm-message="Confirmez-vous la demande de révocation ?">
+                            <input type="hidden" name="_token" value="{{ csrf_token('revocate-guest') }}">
+                            <button class="btn btn-danger" type="submit">Revoquer l'accès</button>
+                        </form>
+                    {% endif %}
                 </td>
             </tr>
         {% endfor %}
