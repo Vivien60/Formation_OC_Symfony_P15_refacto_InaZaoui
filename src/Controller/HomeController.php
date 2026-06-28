@@ -2,11 +2,13 @@
 
 namespace App\Controller;
 
-use Symfony\Component\Routing\Attribute\Route;
 use App\Repository\AlbumRepository;
 use App\Repository\MediaRepository;
 use App\Repository\UserRepository;
+use App\Service\GetActiveUsers;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
 
 class HomeController extends AbstractController
 {
@@ -17,9 +19,9 @@ class HomeController extends AbstractController
     }
 
     #[Route(path: '/guests', name: 'guests')]
-    public function guests(UserRepository $userRepository)
+    public function guests(GetActiveUsers $getActiveUsers): Response
     {
-        $guests = $userRepository->findBy(['admin' => false]);
+        $guests = $getActiveUsers->all();
 
         return $this->render('front/guests.html.twig', [
             'guests' => $guests,
@@ -27,9 +29,9 @@ class HomeController extends AbstractController
     }
 
     #[Route(path: '/guest/{id}', name: 'guest')]
-    public function guest(int $id, UserRepository $userRepository)
+    public function guest(int $id, GetActiveUsers $getActiveUsers): Response
     {
-        $guest = $userRepository->find($id);
+        $guest = $getActiveUsers->one($id);
 
         return $this->render('front/guest.html.twig', [
             'guest' => $guest,
@@ -37,8 +39,12 @@ class HomeController extends AbstractController
     }
 
     #[Route(path: '/portfolio/{id}', name: 'portfolio')]
-    public function portfolio(AlbumRepository $albumRepository, UserRepository $userRepository, MediaRepository $mediaRepository, ?int $id = null)
-    {
+    public function portfolio(
+        AlbumRepository $albumRepository,
+        UserRepository $userRepository,
+        MediaRepository $mediaRepository,
+        ?int $id = null,
+    ): Response {
         $albums = $albumRepository->findAll();
         $album = $id ? $albumRepository->find($id) : null;
         $user = $userRepository->findOneByAdmin(true);
@@ -49,7 +55,7 @@ class HomeController extends AbstractController
 
         return $this->render('front/portfolio.html.twig', [
             'albums' => $albums,
-            'album' => $album,
+            'album'  => $album,
             'medias' => $medias,
         ]);
     }
