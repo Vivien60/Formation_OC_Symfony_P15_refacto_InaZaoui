@@ -21,11 +21,22 @@ class RevocateUserTest extends FunctionalTestCase
         yield 'user revocated' => [
             'login'            => 'invite+0@example.com',
             'password'         => 'password',
+            'name'             => 'Invité 0',
+        ];
+    }
+
+    public static function revokedUsersWithMedias(): iterable
+    {
+        $revokedUsers = self::revokedUsers();
+        $revokedUser = $revokedUsers->current();
+        yield 'user revocated with medias' => [
+            'mediaTitle' => 'Titre 0',
+            'user'       => $revokedUser,
         ];
     }
 
     #[DataProvider('users')]
-    public function testRevocateUserByAdmin($id, $name)
+    public function testRevocateUserByAdmin(int $id, string $name)
     {
         $this->login(self::ADMIN_IDENTIFIER);
         $crawler = $this->client->request('GET', '/admin/guest');
@@ -49,7 +60,7 @@ class RevocateUserTest extends FunctionalTestCase
     }
 
     #[DataProvider('revokedUsers')]
-    public function testConnectAsRevocatedUser($login, $password)
+    public function testConnectAsRevocatedUser(string $login, string $password, string $name)
     {
         $this->get('/login');
         $this->assertResponseIsSuccessful();
@@ -61,5 +72,23 @@ class RevocateUserTest extends FunctionalTestCase
         $this->assertResponseRedirects('/login');
         $this->client->followRedirect();
         $this->assertSelectorTextContains(selector: '.alert', text: 'Accès révoqué');
+    }
+
+    #[DataProvider('revokedUsers')]
+    public function testRevocatedUserDoesNotAppearOnGuestsPage(string $login, string $password, string $name): void
+    {
+        $this->get('/guests');
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextNotContains('.guests', $name);
+    }
+
+    #[DataProvider('revokedUsersWithMedias')]
+    public function testRevocatedUserDoesNotAppearOnPortfolioPage(string $mediaTitle, array $user): void
+    {
+        $this->get('/portfolio');
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextNotContains('.media-title', $mediaTitle);
     }
 }
