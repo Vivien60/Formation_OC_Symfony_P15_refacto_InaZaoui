@@ -26,7 +26,7 @@ class SmokeTest extends FunctionalTestCase
     public static function databaseBackedRoutes(): iterable
     {
         yield 'guests list'     => ['/guests'];
-        yield 'guest by id'     => ['/guest/1'];
+        yield 'guest by id'     => ['/guest/3'];
         yield 'portfolio'       => ['/portfolio'];
         yield 'portfolio by id' => ['/portfolio/1'];
     }
