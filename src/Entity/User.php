@@ -65,6 +65,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private array $roles = [];
 
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $revocated = false;
+
 
     public function __construct()
     {
@@ -176,5 +179,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLogin(?string $login): void
     {
         $this->login = $login;
+    }
+
+    public function isRevocated(): bool
+    {
+        return $this->revocated;
+    }
+
+    public function revocate(): void
+    {
+        $this->revocated = true;
+    }
+
+    public function reinstate(): void
+    {
+        $this->revocated = false;
     }
 }

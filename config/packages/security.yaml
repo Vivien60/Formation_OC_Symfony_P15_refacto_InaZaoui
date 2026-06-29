@@ -11,6 +11,9 @@ parameters:
       roles: [ 'ROLE_USER' ]
 
 security:
+    role_hierarchy:
+      ROLE_ADMIN: ROLE_USER
+
     # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
@@ -35,6 +38,7 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
+            user_checker: App\Security\RevocationUserChecker
             lazy: true
             provider: chain_provider
             form_login:
@@ -43,8 +47,9 @@ security:
 
     # Note: Only the *first* matching rule is applied
     access_control:
-      - { path: ^/admin/album, roles: ROLE_ADMIN }
       - { path: ^/admin/media, roles: ROLE_USER }
+      - { path: ^/admin/, roles: ROLE_ADMIN }
+      - { path: ^/, roles: PUBLIC_ACCESS }
 
 when@test:
     security:

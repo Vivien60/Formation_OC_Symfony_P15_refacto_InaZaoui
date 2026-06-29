@@ -3,6 +3,7 @@
 namespace App\Tests\Functional;
 
 use PHPUnit\Framework\Attributes\DataProvider;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Smoke tests : on ne vérifie QUE le code de retour HTTP des routes.
@@ -15,32 +16,11 @@ use PHPUnit\Framework\Attributes\DataProvider;
  */
 class SmokeTest extends FunctionalTestCase
 {
-
-    #[DataProvider('publicSuccessfulRoutes')]
-    public function testPublicRouteIsSuccessful(string $url): void
-    {
-        $this->client->request('GET', $url);
-
-        $this->assertCurrentResponseIsSuccessful();
-    }
-
     public static function publicSuccessfulRoutes(): iterable
     {
         yield 'home'  => ['/'];
         yield 'about' => ['/about'];
         yield 'login' => ['/login'];
-    }
-
-    /**
-     * Routes publiques qui interrogent la base. Les id sont hardcodés (1) :
-     * on fait confiance au jeu de données de test.
-     */
-    #[DataProvider('databaseBackedRoutes')]
-    public function testDatabaseRouteIsSuccessful(string $url): void
-    {
-        $this->client->request('GET', $url);
-
-        $this->assertCurrentResponseIsSuccessful();
     }
 
     public static function databaseBackedRoutes(): iterable
@@ -50,6 +30,40 @@ class SmokeTest extends FunctionalTestCase
         yield 'portfolio'       => ['/portfolio'];
         yield 'portfolio by id' => ['/portfolio/1'];
     }
+
+    public static function protectedRoutes(): iterable
+    {
+        yield 'admin album index' => ['/admin/album'];
+        yield 'admin media index' => ['/admin/media'];
+        yield 'admin guest index' => ['/admin/guest'];
+    }
+
+    public static function authenticatedAdminRoutes(): iterable
+    {
+        yield 'admin album index' => ['/admin/album'];
+        yield 'admin media index' => ['/admin/media'];
+        yield 'admin guest index' => ['/admin/guest'];
+    }
+
+    #[DataProvider('publicSuccessfulRoutes')]
+    public function testPublicRouteIsSuccessful(string $url): void
+    {
+        $this->client->request('GET', $url);
+
+        $this->assertCurrentResponseIsSuccessful();
+    }
+
+    /**
+     * Routes publiques qui interrogent la base.
+     */
+    #[DataProvider('databaseBackedRoutes')]
+    public function testDatabaseRouteIsSuccessful(string $url): void
+    {
+        $this->client->request('GET', $url);
+
+        $this->assertCurrentResponseIsSuccessful();
+    }
+
 
     /**
      * Sans authentification, une route /admin doit renvoyer une redirection
@@ -63,12 +77,6 @@ class SmokeTest extends FunctionalTestCase
         $this->assertResponseRedirects();
     }
 
-    public static function protectedRoutes(): iterable
-    {
-        yield 'admin album index' => ['/admin/album'];
-        yield 'admin media index' => ['/admin/media'];
-    }
-
     /**
      * Une fois authentifié, les index admin doivent répondre 200. C'est ce qui
      * exécute réellement le code des contrôleurs admin.
@@ -76,19 +84,15 @@ class SmokeTest extends FunctionalTestCase
      * On se limite aux GET non mutants : surtout pas les routes "delete"
      * (admin album/media), qui suppriment en base sur un simple GET.
      */
-    #[DataProvider('authenticatedAdminRoutes')]
+    #[DataProvider('
+  
+  ')]
     public function testAuthenticatedAdminRouteIsSuccessful(string $url): void
     {
         $this->login('ina@zaoui.com');
         $this->client->request('GET', $url);
 
         $this->assertCurrentResponseIsSuccessful();
-    }
-
-    public static function authenticatedAdminRoutes(): iterable
-    {
-        yield 'admin album index' => ['/admin/album'];
-        yield 'admin media index' => ['/admin/media'];
     }
 
     /**
@@ -116,6 +120,41 @@ class SmokeTest extends FunctionalTestCase
         $this->client->request('GET', '/admin/album/delete/1');
 
         $this->assertResponseRedirects('/admin/album');
+    }
+
+    public function testAdminDeleteMediaRedirects(): void
+    {
+        $this->resetTestUploadsDirectory();
+        $this->login(self::ADMIN_IDENTIFIER);
+        $crawler = $this->client->request('GET', '/admin/media');
+        $form = $crawler
+            ->filterXPath('//form[contains(@class, "delete-media__form") and contains(@action, "/admin/media/delete/4")]')
+            ->form();
+        $this->client->submit($form);
+
+        $this->assertResponseRedirects('/admin/media');
+    }
+
+    private function resetTestUploadsDirectory(): void
+    {
+        $source = self::getContainer()->getParameter('kernel.project_dir').'/public';
+        $target = self::getContainer()->getParameter('app.public_dir');
+        $filesystem = new Filesystem();
+        $filesystem->remove($target);
+        $filesystem->mirror($source, $target);
+    }
+
+    public function testAdminDeleteGuestRedirects(): void
+    {
+        $this->login(self::ADMIN_IDENTIFIER);
+        $crawler = $this->client->request('GET', '/admin/guest');
+        $form = $crawler
+            ->filterXPath(
+                xpath: '//form[contains(@class, "delete-form") and contains(@action, "/admin/guest/delete/5")]')
+            ->form();
+
+        $this->client->submit($form);
+        $this->assertResponseRedirects('/admin/guest');
     }
 
     private function assertCurrentResponseIsSuccessful(): void

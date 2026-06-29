@@ -6,6 +6,7 @@ use App\Entity\Media;
 use App\Form\MediaType;
 use App\Repository\AlbumRepository;
 use App\Repository\MediaRepository;
+use App\Service\MediaRemover;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -94,15 +95,15 @@ class MediaController extends AbstractController
         return $this->render('admin/media/add.html.twig', ['form' => $form]);
     }
 
-    #[Route(path: '/admin/media/delete/{id}', name: 'admin_media_delete')]
+    #[Route(path: '/admin/media/delete/{id}', name: 'admin_media_delete', methods: ['POST'])]
     #[IsCsrfTokenValid('delete-media', tokenKey: '_token')]
-    public function delete(int $id, MediaRepository $mediaRepository, EntityManagerInterface $entityManager): RedirectResponse
-    {
-        $media = $mediaRepository->find($id);
-        $entityManager->remove($media);
+    public function delete(
+        Media $media,
+        EntityManagerInterface $entityManager,
+        MediaRemover $remover,
+    ): RedirectResponse {
+        $remover->execute(entityManager: $entityManager, media: $media);
         $entityManager->flush();
-        unlink($media->getPath());
-
         return $this->redirectToRoute('admin_media_index');
     }
 }
