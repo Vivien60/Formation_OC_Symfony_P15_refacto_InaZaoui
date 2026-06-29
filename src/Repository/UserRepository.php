@@ -28,6 +28,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
     /**
      * Used to upgrade (rehash) the user's password automatically over time.
+     * @codeCoverageIgnore
+     * Test unitaire peu utile, test fonctionnel adapté, mais impossible car méthode non appelée.
+     * Il s'agit d'une méthode demandée par contrat par Symfony
      */
     public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void
     {

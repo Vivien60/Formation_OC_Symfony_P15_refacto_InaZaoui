@@ -8,6 +8,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -42,6 +43,13 @@ class MigrateInMemoryUsersCommand extends Command
             'Chemin (relatif à la racine du projet) du security.yaml contenant le provider in-memory',
             'config/packages/security.yaml',
         );
+
+        $this->addOption(
+            'dry-run',
+            null,
+            InputOption::VALUE_NONE,
+            'Affiche ce qui serait fait, sans rien modifier, ni impact ni effet de bord.',
+        );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -63,7 +71,6 @@ class MigrateInMemoryUsersCommand extends Command
 
             return Command::SUCCESS;
         }
-
 
         $repository = $this->em->getRepository(User::class);
         $created = 0;
@@ -96,7 +103,9 @@ class MigrateInMemoryUsersCommand extends Command
             $this->em->persist($user);
         }
 
-        $this->em->flush();
+        if (!$input->getOption('dry-run')) {
+            $this->em->flush();
+        }
 
         $io->success(sprintf(
             '%d utilisateur(s) traité(s) : %d créé(s), %d mis à jour.',
