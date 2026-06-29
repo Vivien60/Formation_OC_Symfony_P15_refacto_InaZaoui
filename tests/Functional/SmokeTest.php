@@ -84,9 +84,7 @@ class SmokeTest extends FunctionalTestCase
      * On se limite aux GET non mutants : surtout pas les routes "delete"
      * (admin album/media), qui suppriment en base sur un simple GET.
      */
-    #[DataProvider('
-  
-  ')]
+    #[DataProvider('authenticatedAdminRoutes')]
     public function testAuthenticatedAdminRouteIsSuccessful(string $url): void
     {
         $this->login('ina@zaoui.com');
