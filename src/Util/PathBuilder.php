@@ -2,6 +2,10 @@
 
 declare(strict_types=1);
 
+/**
+ * Classe utilitaire pour construire des chemins de fichiers en concaténant plusieurs segments de chemin.
+ */
+
 namespace App\Util;
 
 class PathBuilder

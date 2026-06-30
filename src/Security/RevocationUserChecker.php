@@ -10,8 +10,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
 /**
  * Class RevocationUserChecker.
  *
- * Implements the UserCheckerInterface to handle checks during the
- * authentication process for API access.
+ * Implémente l'UserCheckerInterface pour gérer les vérifications lors du
+ * processus d'authentification pour l'accès à l'admin.
+ * Vérifie si l'utilisateur, son accès, a été révoqué.
  */
 class RevocationUserChecker implements UserCheckerInterface
 {
