@@ -39,12 +39,6 @@ class MediaController extends AbstractController
             $entityManager->flush();
         }
 
-        if ($request->isMethod('POST') && $album && $media) {
-            $media->setAlbum($album);
-            $entityManager->persist($media);
-            $entityManager->flush();
-        }
-
         $page = $request->query->getInt('page', 1);
 
         $criteria = [];
