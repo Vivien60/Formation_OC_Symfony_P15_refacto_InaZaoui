@@ -16,7 +16,7 @@ use Symfony\Component\Yaml\Yaml;
 
 /**
  * Commande one-shot : recopie les utilisateurs du provider in-memory
- * (security.yaml) vers la base de données, en transférant le hash tel quel.
+ * (listés dans security.yaml) vers la base de données, en transférant le hash tel quel.
  *
  * À lancer une seule fois, dans l'environnement où le security.yaml complet
  * est présent, puis à supprimer avec le bloc in-memory.

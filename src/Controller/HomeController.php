@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\Repository\AlbumRepository;
 use App\Repository\MediaRepository;
 use App\Repository\UserRepository;
-use App\Service\GetActiveUsers;
+use App\Service\GetVisibleUsers;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -19,7 +19,7 @@ class HomeController extends AbstractController
     }
 
     #[Route(path: '/guests', name: 'guests')]
-    public function guests(GetActiveUsers $getActiveUsers): Response
+    public function guests(GetVisibleUsers $getActiveUsers): Response
     {
         $guests = $getActiveUsers->all();
 
@@ -29,7 +29,7 @@ class HomeController extends AbstractController
     }
 
     #[Route(path: '/guest/{id}', name: 'guest')]
-    public function guest(int $id, GetActiveUsers $getActiveUsers): Response
+    public function guest(int $id, GetVisibleUsers $getActiveUsers): Response
     {
         $guest = $getActiveUsers->one($id);
 
