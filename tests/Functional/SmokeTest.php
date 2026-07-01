@@ -91,7 +91,7 @@ class SmokeTest extends FunctionalTestCase
     #[DataProvider('authenticatedAdminRoutes')]
     public function testAuthenticatedAdminRouteIsSuccessful(string $url): void
     {
-        $this->login('ina@zaoui.com');
+        $this->login(self::ADMIN_IDENTIFIER);
         $this->client->request('GET', $url);
 
         $this->assertCurrentResponseIsSuccessful();
@@ -103,7 +103,7 @@ class SmokeTest extends FunctionalTestCase
      */
     public function testAdminUpdateAlbumRedirects(): void
     {
-        $this->login('ina@zaoui.com');
+        $this->login(self::ADMIN_IDENTIFIER);
         $this->client->request('GET', '/admin/album/update/1');
         $this->client->submitForm('Modifier', [
             'album[name]' => 'Smoke test album updated',
@@ -118,7 +118,7 @@ class SmokeTest extends FunctionalTestCase
      */
     public function testAdminDeleteAlbumRedirects(): void
     {
-        $this->login('ina@zaoui.com');
+        $this->login(self::ADMIN_IDENTIFIER);
         $this->client->request('GET', '/admin/album/delete/1');
 
         $this->assertResponseRedirects('/admin/album');

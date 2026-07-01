@@ -13,15 +13,21 @@ namespace App\Tests\Functional;
  */
 class MediaManagementTest extends FunctionalTestCase
 {
+    /**
+     * Tests that adding a media item to an album is successful.
+     *
+     * This function performs the following steps:
+     * - Logs in as an administrator using a predefined identifier.
+     * - Fetches the media management*/
     public function testAddingMediaToAlbumIsSuccessful(): void
     {
         $this->login(self::ADMIN_IDENTIFIER);
         $this->get('/admin/media');
         $this->assertCurrentResponseIsSuccessful();
-        $mediaLib = 'Titre 3';
+        $mediaLib = 'Photo 3';
         $mediaId = 4;
         $albumLib = 'Album 3';
-        $albumId = 3;
+        $albumId = 4;
 
         $row = $this->client->getCrawler()->filterXPath(sprintf("//tr[contains(., '%s')]", $mediaLib));
         $form = $row->filter('form')->form();
@@ -34,7 +40,7 @@ class MediaManagementTest extends FunctionalTestCase
 
         $row = $this->client->getCrawler()->filterXPath(sprintf("//tr[contains(., '%s')]", $mediaLib));
         $album = $row->filterXPath(sprintf("//tr[contains(., '%s')]/td[contains(text(), '%s')]", $mediaLib, $albumLib));
-        $this->assertNotEmpty($album, 'The album was not associated to the media');
+        $this->assertNotEmpty($album, 'L\'album n\'a pas été associé au média');
     }
 
     private function assertCurrentResponseIsSuccessful(): void
