@@ -54,11 +54,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     )]
     private ?string $password = null;
 
-    #[Assert\NotBlank]
-    #[Assert\NotCompromisedPassword]
-    #[Assert\PasswordStrength]
-    private ?string $plainPassword = null;
-
     /**
      * @var list<string> The user roles
      */
