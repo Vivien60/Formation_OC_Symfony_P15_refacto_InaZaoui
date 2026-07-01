@@ -54,6 +54,7 @@ abstract class FunctionalTestCase extends WebTestCase
 
         $this->client->loginUser($provider->loadUserByIdentifier($identifier));
     }
+
     /**
      * @param array<string, mixed> $formData
      */

@@ -68,7 +68,6 @@ class SmokeTest extends FunctionalTestCase
         $this->assertCurrentResponseIsSuccessful();
     }
 
-
     /**
      * Sans authentification, une route /admin doit renvoyer une redirection
      * (vers le formulaire de login), pas une 200 ni une 500.

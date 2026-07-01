@@ -92,7 +92,6 @@ class UploadMediaTest extends FunctionalTestCase
         $this->assertResponseStatusCodeSame($expected['code']);
     }
 
-
     public function testNonAdminCannotListOtherUsersMedias(): void
     {
         $this->login(self::ADMIN_IDENTIFIER);

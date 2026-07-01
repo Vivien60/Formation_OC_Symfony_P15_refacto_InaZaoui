@@ -63,7 +63,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
     private bool $revocated = false;
 
-
     public function __construct()
     {
         $this->medias = new ArrayCollection();

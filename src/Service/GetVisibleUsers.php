@@ -18,7 +18,6 @@ class GetVisibleUsers
     }
 
     /**
-     *
      * @return array<User>
      */
     public function all(): array
