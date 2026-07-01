@@ -44,6 +44,11 @@ security:
             form_login:
                 login_path: admin_login
                 check_path: admin_login
+                enable_csrf: true
+            logout:
+              path: app_logout
+              # where to redirect after logout
+              target: home
 
     # Note: Only the *first* matching rule is applied
     access_control:

@@ -3,12 +3,15 @@
 namespace App\Controller\Admin;
 
 use App\Entity\User;
+use App\Form\GuestType;
 use App\Repository\UserRepository;
 use App\Service\MediaRemover;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 
@@ -54,4 +57,26 @@ final class GuestController extends AbstractController
         $entityManager->flush();
         return $this->redirectToRoute('admin_guest_index');
     }
+
+    #[Route('/admin/guest/add', name: 'admin_guest_add', methods: ['GET', 'POST'])]
+    public function add(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
+    {
+        $guest = new User();
+        $form = $this->createForm(GuestType::class, $guest);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var string $plainPassword */
+            $plainPassword = $form->get('plainPassword')->getData();
+            $guest->setPassword($userPasswordHasher->hashPassword($guest, $plainPassword));
+            $guest->setLogin($guest->getEmail());
+            $entityManager->persist($guest);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('admin_guest_index');
+        }
+        return $this->render('admin/guest/add.html.twig', [
+            'form' => $form,
+        ]);
+    }
+
 }
