@@ -1,0 +1,23 @@
+{% extends 'admin.html.twig' %}
+
+{% block admin %}
+    <div class="d-flex justify-content-between align-items-center">
+        <h1>Guest</h1>
+        <a href="{{ path('admin_guest_index') }}" class="btn btn-primary">Retour</a>
+    </div>
+    {{ form_start(form, {'attr' : {
+        'autocomplete' : 'off',
+    }}) }}
+    {{ form_errors(form) }}
+    {{ form_row(form.name) }}
+    {{ form_row(form.email, {'attr' : {
+        'autocomplete' : 'section-new-user email',
+    }}) }}
+    {{ form_row(form.description) }}
+    {{ form_row(form.admin) }}
+    {{ form_row(form.plainPassword, {'attr' : {
+        'autocomplete' : 'section-new-user new-password',
+    }}) }}
+    <button type="submit" class="btn btn-primary">Ajouter</button>
+    {{ form_end(form) }}
+{% endblock %}

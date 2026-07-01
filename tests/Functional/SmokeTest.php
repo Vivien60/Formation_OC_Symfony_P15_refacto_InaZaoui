@@ -16,6 +16,9 @@ use Symfony\Component\Filesystem\Filesystem;
  */
 class SmokeTest extends FunctionalTestCase
 {
+    /**
+     * Routes publiques sans authentification.
+     */
     public static function publicSuccessfulRoutes(): iterable
     {
         yield 'home'  => ['/'];
@@ -23,6 +26,9 @@ class SmokeTest extends FunctionalTestCase
         yield 'login' => ['/login'];
     }
 
+    /**
+     * Routes qui interrogent la base.
+     */
     public static function databaseBackedRoutes(): iterable
     {
         yield 'guests list'     => ['/guests'];
@@ -31,18 +37,16 @@ class SmokeTest extends FunctionalTestCase
         yield 'portfolio by id' => ['/portfolio/1'];
     }
 
-    public static function protectedRoutes(): iterable
-    {
-        yield 'admin album index' => ['/admin/album'];
-        yield 'admin media index' => ['/admin/media'];
-        yield 'admin guest index' => ['/admin/guest'];
-    }
-
+    /**
+     * Routes qui ont besoin d'authentification.
+     */
     public static function authenticatedAdminRoutes(): iterable
     {
         yield 'admin album index' => ['/admin/album'];
         yield 'admin media index' => ['/admin/media'];
         yield 'admin guest index' => ['/admin/guest'];
+        yield 'admin guest add'   => ['/admin/guest/add'];
+        yield 'admin media add'   => ['/admin/media/add'];
     }
 
     #[DataProvider('publicSuccessfulRoutes')]
@@ -69,7 +73,7 @@ class SmokeTest extends FunctionalTestCase
      * Sans authentification, une route /admin doit renvoyer une redirection
      * (vers le formulaire de login), pas une 200 ni une 500.
      */
-    #[DataProvider('protectedRoutes')]
+    #[DataProvider('authenticatedAdminRoutes')]
     public function testProtectedRouteRedirects(string $url): void
     {
         $this->client->request('GET', $url);
