@@ -12,18 +12,22 @@ class RevocateUserTest extends FunctionalTestCase
     public static function validUsers(): iterable
     {
         yield 'revocate user by admin' => [
-            'id'               => 102,
-            'name'             => 'marie',
+            'id'               => 2,
+            'name'             => 'Invité 0',
         ];
     }
 
     public static function revokedUsers(): iterable
     {
+        $formatLogin = 'user+%d@email.com';
+        $formatName = 'Invité %d';
+
+        $num = 2;
         yield 'user revocated' => [
-            'login'            => 'invite+0@example.com',
+            'id'               => $num + 2, // Admin prend id=1, et num commence à 0
+            'login'            => sprintf($formatLogin, $num),
             'password'         => 'password',
-            'name'             => 'Invité 0',
-            'id'               => 2,
+            'name'             => sprintf($formatName, $num),
         ];
     }
 
@@ -31,8 +35,10 @@ class RevocateUserTest extends FunctionalTestCase
     {
         $revokedUsers = self::revokedUsers();
         $revokedUser = $revokedUsers->current();
+        $num = 6;
         yield 'user revocated with medias' => [
-            'mediaTitle' => 'Titre 0',
+            'mediaTitle' => 'Photo '.$num,
+            'album'      => 2,
             'user'       => $revokedUser,
         ];
     }
@@ -56,18 +62,19 @@ class RevocateUserTest extends FunctionalTestCase
             '//tr[td[normalize-space(.) = "%s"]]',
             $name
         ));
-        self::assertCount(1, $revokedUserRow, 'L\'utilisateur est affiché dans la liste');
+        self::assertCount(1, $revokedUserRow, 'L\'utilisateur n\'est pas affiché dans la liste : il devrait');
         self::assertCount(0, $revokedUserRow->filterXPath('.//form[contains(@class, "revocate-form")]'), 'Le bouton permettant de révoquer ne s\'affiche plus après révocation de l\'invité');
         self::assertCount(1, $revokedUserRow->filterXPath('.//form[contains(@class, "reinstate-form")]'), 'Le bouton "Restaurer l\'accès s\'affiche pour l\'utilisateur révoqué');
     }
-    #[DataProvider('revokedUsers')]
-    public function testReinstateUserByAdmin(int $id, string $name, string $login, string $password)
+
+    #[DataProvider('revokedUsersWithMedias')]
+    public function testReinstateUserByAdmin(array $user, string $mediaTitle, int $album)
     {
         $this->login(self::ADMIN_IDENTIFIER);
         $crawler = $this->client->request('GET', '/admin/guest');
         $form = $crawler
             ->filterXPath(
-                xpath: sprintf('//form[contains(@class, "reinstate-form") and contains(@action, "/admin/guest/reinstate/%s")]', $id))
+                xpath: sprintf('//form[contains(@class, "reinstate-form") and contains(@action, "/admin/guest/reinstate/%s")]', $user['id']))
             ->form();
         $this->client->submit($form);
         $this->assertResponseRedirects('/admin/guest');
@@ -77,23 +84,23 @@ class RevocateUserTest extends FunctionalTestCase
 
         $reinstatedUserRow = $crawler->filterXPath(sprintf(
             '//tr[td[normalize-space(.) = "%s"]]',
-            $name
+            $user['name']
         ));
         self::assertCount(1, $reinstatedUserRow, 'L\'utilisateur est affiché dans la liste');
         self::assertCount(1, $reinstatedUserRow->filterXPath('.//form[contains(@class, "revocate-form")]'), 'Le bouton permettant de révoquer ne s\'affiche plus après révocation de l\'invité');
         self::assertCount(0, $reinstatedUserRow->filterXPath('.//form[contains(@class, "reinstate-form")]'), 'Le bouton "Restaurer l\'accès s\'affiche pour l\'utilisateur révoqué');
         $this->get('/guests');
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('.guests', $name);
-        $this->get('/portfolio');
+        $this->assertSelectorTextContains('.guests', $user['name']);
+        $this->get('/portfolio/'.$album);
         $this->assertResponseIsSuccessful();
-        $this->assertAnySelectorTextContains('.media-title', 'Titre 0');
+        $this->assertAnySelectorTextContains('.media-title', $mediaTitle);
         $this->get('/login');
         $this->assertResponseIsSuccessful();
         $this->client->submitForm('Connexion',
             [
-                '_username' => $login,
-                '_password' => $password,
+                '_username' => $user['login'],
+                '_password' => $user['password'],
             ]);
         $token = $this->client->getContainer()->get('security.token_storage')->getToken();
         $this->assertTrue($token->getUser() instanceof UserInterface, 'L\'utilisateur restauré est bien authentifié');
@@ -126,11 +133,12 @@ class RevocateUserTest extends FunctionalTestCase
     }
 
     #[DataProvider('revokedUsersWithMedias')]
-    public function testRevocatedUserDoesNotAppearOnPortfolioPage(string $mediaTitle, array $user): void
+    public function testRevocatedUserDoesNotAppearOnPortfolioPage(string $mediaTitle, int $album, array $user): void
     {
-        $this->get('/portfolio');
+        $this->get('/portfolio/'.$album);
 
         $this->assertResponseIsSuccessful();
+        $this->assertSelectorExists('.media-title');
         $this->assertSelectorTextNotContains('.media-title', $mediaTitle);
     }
 }

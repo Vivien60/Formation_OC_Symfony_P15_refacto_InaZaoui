@@ -6,7 +6,7 @@ namespace App\Service;
 
 use App\Entity\Media;
 use App\Util\PathBuilder;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
@@ -23,7 +23,7 @@ class MediaRemover
     /**
      * Supprime effectivement le média, à la fois en base via l'entité, et le fichier.
      */
-    public function execute(EntityManager $entityManager, Media $media): void
+    public function execute(EntityManagerInterface $entityManager, Media $media): void
     {
         $this->removeFile($media->getPath());
         $entityManager->remove($media);

@@ -21,6 +21,7 @@ final class GuestController extends AbstractController
     public function index(UserRepository $repository): Response
     {
         $users = $repository->findBy(['admin' => false]);
+
         return $this->render('admin/guest/index.html.twig', [
             'guests' => $users,
         ]);
@@ -35,6 +36,7 @@ final class GuestController extends AbstractController
             $mediaRemover->execute(entityManager: $entityManager, media: $media);
         }
         $entityManager->flush();
+
         return $this->redirectToRoute('admin_guest_index');
     }
 
@@ -45,6 +47,7 @@ final class GuestController extends AbstractController
         $user->revocate();
         $entityManager->persist($user);
         $entityManager->flush();
+
         return $this->redirectToRoute('admin_guest_index');
     }
 
@@ -55,6 +58,7 @@ final class GuestController extends AbstractController
         $user->reinstate();
         $entityManager->persist($user);
         $entityManager->flush();
+
         return $this->redirectToRoute('admin_guest_index');
     }
 
@@ -74,9 +78,9 @@ final class GuestController extends AbstractController
 
             return $this->redirectToRoute('admin_guest_index');
         }
+
         return $this->render('admin/guest/add.html.twig', [
             'form' => $form,
         ]);
     }
-
 }

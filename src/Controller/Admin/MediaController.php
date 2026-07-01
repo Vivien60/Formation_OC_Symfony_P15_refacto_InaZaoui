@@ -98,6 +98,7 @@ class MediaController extends AbstractController
     ): RedirectResponse {
         $remover->execute(entityManager: $entityManager, media: $media);
         $entityManager->flush();
+
         return $this->redirectToRoute('admin_media_index');
     }
 }

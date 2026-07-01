@@ -11,11 +11,11 @@ class LoginUserTest extends FunctionalTestCase
 {
     public static function validUsers(): iterable
     {
-        yield 'marie — invitée non révoquée' => [
-            'login'    => 'marie@example.com',
-            'email'    => 'marie@example.com',
+        yield 'invité non révoqué' => [
+            'login'    => self::NON_ADMIN_IDENTIFIER,
+            'email'    => self::NON_ADMIN_IDENTIFIER,
             'password' => 'password',
-            'name'     => 'marie',
+            'name'     => self::NON_ADMIN_NAME,
         ];
     }
 

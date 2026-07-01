@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional;
 
-use PHPUnit\Framework\Attributes\DataProvider;
-
 class AddUserTest extends FunctionalTestCase
 {
     public function testAddUserByAdmin()

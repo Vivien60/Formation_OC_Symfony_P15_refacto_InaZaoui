@@ -11,8 +11,8 @@ class DeleteUserTest extends FunctionalTestCase
     public static function users(): iterable
     {
         yield 'delete user by admin' => [
-            'id'   => 5,
-            'name' => 'Invité 3',
+            'id'             => 5,
+            'name'           => 'Invité 3',
             'nameNotDeleted' => 'Invité 0',
         ];
     }

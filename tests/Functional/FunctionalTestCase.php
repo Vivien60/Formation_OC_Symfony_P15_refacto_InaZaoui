@@ -11,8 +11,9 @@ use Symfony\Component\DomCrawler\Crawler;
 
 abstract class FunctionalTestCase extends WebTestCase
 {
-    protected const ADMIN_IDENTIFIER = 'ina@zaoui.com';
-    protected const NON_ADMIN_IDENTIFIER = 'marie@example.com';
+    protected const ADMIN_IDENTIFIER = 'admin';
+    protected const NON_ADMIN_IDENTIFIER = 'user+0@email.com';
+    protected const NON_ADMIN_NAME = 'Invité 0';
     protected KernelBrowser $client;
 
     protected function setUp(): void
@@ -53,6 +54,7 @@ abstract class FunctionalTestCase extends WebTestCase
 
         $this->client->loginUser($provider->loadUserByIdentifier($identifier));
     }
+
     /**
      * @param array<string, mixed> $formData
      */
